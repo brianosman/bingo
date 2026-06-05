@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPL Bingo</title>
+    <style>
+        /* Base reset and full viewport height */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        /* 5x5 Grid layout that expands to fill available space */
+        #grid-container {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 10px; /* Small margins */
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Individual button styling */
+        .grid-button {
+            position: relative;
+            background-color: #ffffff;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: clamp(0.8rem, 2vw, 1.5rem);
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            transition: background-color 0.2s, border-color 0.2s;
+            /* Container query allows the circle to size itself proportionally */
+            container-type: size; 
+        }
+
+        .grid-button:hover {
+            background-color: #fdfdfd;
+            border-color: #bbb;
+        }
+
+        /* The blue circle overlay (hidden by default) */
+        .grid-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* 85cqmin means 85% of the container's minimum dimension (width or height) */
+            width: 85cqmin;
+            height: 85cqmin;
+            background-color: rgba(0, 102, 255, 0.4); /* Blue with partial opacity */
+            border-radius: 50%; /* Makes it a perfect circle */
+            opacity: 0;
+            pointer-events: none; /* Clicks pass through the circle to the button */
+            transition: opacity 0.15s ease-in-out;
+        }
+
+        /* Activated pressed state */
+        .grid-button.pressed::after {
+            opacity: 1;
+        }
+
+        /* Bottom controls section */
+        #controls {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            border-top: 2px solid #ddd;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        #reset-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        #reset-btn:hover {
+            background-color: #1a252f;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="grid-container"></div>
+    
+    <div id="controls">
+        <button id="reset-btn">Randomize & Reset</button>
+    </div>
+
+    <script>
+        // A robust list of words to pull from (must be at least 25 words)
+            const wordList = [
+                "They're still a ways out",
+                "Multiple Mahers at one call",
+                "K9 deployed",
+                "Not my pants",
+                "PIT maneuver",
+                "Fleeing for no good reason",
+                "FST administered",
+                "FST refused",
+                "Something hidden in underpants or body",
+                "Slow drivers impeding chase",
+                "Trifecta: No license, registration, insurance",
+                "Feel-good stop to chat with interesting person",
+                "How much marijuana is in the car?",
+                "Speeding over 110 mph",
+                "Unrestrained child",
+                "Child in car during pursuit",
+                "Call Mom",
+                "Tantrum in back of car",
+                "Giving a fake name",
+                "Woodline",
+                "Sternum rub",
+                "Spike strips",
+                "Car meet up",
+                "Open container",
+                "Taser deployed",
+                "Sex toys",
+                "In park after dark",
+                "Something on fire",
+                "Noise complaint at party",
+                "Dog in the car",
+                "Weird animal",
+                "Little tree",
+                "Drone deployed",
+                "Civil matter",
+            ];
+
+        const gridContainer = document.getElementById('grid-container');
+        const resetBtn = document.getElementById('reset-btn');
+        const buttons = [];
+
+        // 1. Setup the 5x5 grid layout
+        function initializeGrid() {
+            for (let i = 0; i < 25; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'grid-button';
+                
+                // Toggle the 'pressed' state class on click
+                btn.addEventListener('click', () => {
+                    btn.classList.toggle('pressed');
+                });
+
+                gridContainer.appendChild(btn);
+                buttons.push(btn);
+            }
+        }
+
+        // 2. Randomize the text and clear all states
+        function randomizeAndReset() {
+            // Create a shuffled copy of the word array
+            const shuffledWords = [...wordList].sort(() => 0.5 - Math.random());
+            
+            // Assign a word to each button and remove the pressed class
+            buttons.forEach((btn, index) => {
+                btn.textContent = shuffledWords[index];
+                btn.classList.remove('pressed');
+            });
+        }
+
+        // 3. Initialize everything on load
+        initializeGrid();
+        randomizeAndReset();
+
+        // 4. Attach event listener to the bottom reset button
+        resetBtn.addEventListener('click', randomizeAndReset);
+    </script>
+
+</body>
+</html>
